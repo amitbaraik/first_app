@@ -3,6 +3,8 @@ FirstApp::Application.routes.draw do
 
   get "pages/contact"
 
+  get "pages/about"
+
   resources :microposts
 
   resources :users
