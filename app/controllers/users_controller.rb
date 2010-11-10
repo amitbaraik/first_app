@@ -1,9 +1,15 @@
 class UsersController < ApplicationController
+
+before_filter :authenticate, :only => [:edit, :update]
+before_filter :correct_user, :only => [:edit, :update]
+before_filter :admin_user, :only => :destroy
+
   # GET /users
   # GET /users.xml
   def index
     @users = User.all
-
+    @title = "All users"
+    @users = User.paginate(:page => params[:page], :per_page=>2)
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @users }
@@ -34,9 +40,11 @@ class UsersController < ApplicationController
   end
 
   # GET /users/1/edit
-  def edit
-    @user = User.find(params[:id])
-  end
+def edit
+  @user = User.find(params[:id])
+  @title = "Edit user"
+end
+
 
   # POST /users
   # POST /users.xml
@@ -72,13 +80,27 @@ class UsersController < ApplicationController
 
   # DELETE /users/1
   # DELETE /users/1.xml
-  def destroy
-    @user = User.find(params[:id])
-    @user.destroy
+def destroy
+  User.find(params[:id]).destroy
+  flash[:success] = "User destroyed."
+  redirect_to users_path
+end
 
-    respond_to do |format|
-      format.html { redirect_to(users_url) }
-      format.xml  { head :ok }
-    end
-  end
+
+private
+
+def authenticate
+  deny_access unless signed_in?
+end
+
+def correct_user
+  @user = User.find(params[:id])
+  redirect_to(root_path) unless current_user?(@user)
+end
+
+def admin_user
+  redirect_to(users_path)
+end
+
+
 end
