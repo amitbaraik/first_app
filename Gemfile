@@ -42,3 +42,7 @@ group :test do
   gem 'factory_girl_rails'
 end
 
+heroku config:add BUNDLE_WITHOUT="development:test"
+gem "sqlite3-ruby", :group => :development
+
+
