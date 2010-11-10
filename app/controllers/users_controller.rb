@@ -20,6 +20,7 @@ before_filter :admin_user, :only => :destroy
   # GET /users/1.xml
   def show
     @user = User.find(params[:id])
+    @microposts = @user.microposts.paginate(:page => params[:page])
     @title = @user.name
     respond_to do |format|
       format.html # show.html.erb
@@ -44,6 +45,12 @@ def edit
   @user = User.find(params[:id])
   @title = "Edit user"
 end
+
+def feed
+  # This is preliminary. See Chapter 12 for the full implementation.
+  Micropost.where("user_id = ?", id)
+end
+
 
 
   # POST /users
